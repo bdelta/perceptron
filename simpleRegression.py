@@ -2,7 +2,11 @@ from __future__ import print_function
 import numpy as np
 from matplotlib import pyplot as plt
 from fractions import Fraction
+import random as rd
 
+#This is a neural network with 2 layers
+#2 input nodes in the first layer
+#1 output node in the second layer
 #input data
 data = [[3,  1.5, 1],
 		[2,  1,   0],
@@ -13,7 +17,8 @@ data = [[3,  1.5, 1],
 		[5.5, 1,  1],
 		[1,   1,  0]]
 
-mystery_flower = [4.5, 1]
+#Change the value of mystery flower to test data points
+mystery_flower = [rd.random()*6, rd.random()*2]
 
 def pred(m1, m2, w1, w2, b):
 	return m1*w1 + m2*w2 + b
@@ -45,42 +50,45 @@ for i in range(len(data)):
 
 learning_rate = 0.2
 
-#Training loop
-#Initilize with random variables
-num_red = 0
-num_blue = 0
 
-for i in range(100):
-	w1 = np.random.randn()
-	w2 = np.random.randn()
-	b = np.random.randn()
-	for i in range(100):
-		cost_sum_w1 = 0
-		cost_sum_w2 = 0
-		cost_sum_b = 0
-		#Compute the cost function and its derivative
-		for i in range(len(data)):
-			point = data[i]
+#Initilize values
+w1 = 0
+w2 = 0
+b = 0
 
-			z = pred(point[0], point[1], w1, w2, b)
+for i in range(1000):
+	cost_sum_w1 = 0
+	cost_sum_w2 = 0
+	cost_sum_b = 0
+	#Compute the cost function and its derivative
+	for i in range(len(data)):
+		point = data[i]
 
-			cost_sum_w1 += cost_p(sigmoid(z),point[2])*sigmoid_p(z)*point[0]
-			cost_sum_w2 += cost_p(sigmoid(z),point[2])*sigmoid_p(z)*point[1]
-			cost_sum_b += cost_p(sigmoid(z),point[2])*sigmoid_p(z)
+		z = pred(point[0], point[1], w1, w2, b)
 
-		w1 -= learning_rate*Fraction(1,len(data))*cost_sum_w1
-		w2 -= learning_rate*Fraction(1,len(data))*cost_sum_w2
-		b -= learning_rate*Fraction(1,len(data))*cost_sum_b
+		cost_sum_w1 += cost_p(sigmoid(z),point[2])*sigmoid_p(z)*point[0]
+		cost_sum_w2 += cost_p(sigmoid(z),point[2])*sigmoid_p(z)*point[1]
+		cost_sum_b += cost_p(sigmoid(z),point[2])*sigmoid_p(z)
 
-		#print(cost(z,point[2]))
+	w1 -= learning_rate*Fraction(1,len(data))*cost_sum_w1
+	w2 -= learning_rate*Fraction(1,len(data))*cost_sum_w2
+	b -= learning_rate*Fraction(1,len(data))*cost_sum_b
 
-	x = sigmoid(pred(mystery_flower[0],mystery_flower[1],w1,w2,b))
-	plt.scatter(mystery_flower[0],mystery_flower[1], c = color)
-	if x < 0.5:
-		num_blue += 1
-	else:
-		num_red += 1
-#plt.show()
-total = num_red + num_blue
-print("b = %d",Fraction(num_blue,total))
-print("r = %d",Fraction(num_red,total))
+	#print(w1)
+	#print(w2)
+	#print(b)
+	#This should be decreasing
+	#print(cost(z,point[2]))
+
+x = sigmoid(pred(mystery_flower[0],mystery_flower[1],w1,w2,b))
+color = 'r'
+result = 'red'
+if x < 0.5:
+	color = 'b'
+	result = 'blue'
+
+#Triangle represents the mystery marker
+plt.scatter(mystery_flower[0],mystery_flower[1], c = color, marker='v', s=50)
+print("The result is " + repr(x) + ' which is ' + result)
+
+plt.show()
